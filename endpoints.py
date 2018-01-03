@@ -55,7 +55,7 @@ def printGrep(file, grepString):
 #setup
 parser = argparse.ArgumentParser(description="Endpoints script")
 parser.add_argument("--name", help="pick one controller")
-parser.add_argument("--c", help="show all controllers", action='store_true')
+parser.add_argument("--l", help="list all controllers", action='store_true')
 parser.add_argument("--grep", help="print all lines containing string")
 args, leftovers = parser.parse_known_args()
 
@@ -73,7 +73,7 @@ fileCounter=1
 for filename in os.listdir(path):
     with open(path+'/'+filename) as file:
         
-        if args.c is True:
+        if args.l is True:
             print(str(fileCounter)+ ' - ' +Fore.GREEN + Style.BRIGHT +  filename.replace('.java','').replace('Controller','')+Style.RESET_ALL+"Controller")
             fileCounter = fileCounter + 1
         elif args.grep is not None and args.name is not None:
@@ -93,8 +93,7 @@ for filename in os.listdir(path):
                 print(Style.BRIGHT + Fore.GREEN + filename)
                 printController(file)
                 
-if controllerFound is False and args.c is not True:
-   print("Controller "+controllerName+" not found")
+if controllerFound is False and args.l is not True:
+   print(Fore.RED + Style.BRIGHT+"Controller "+controllerName+" not found")
 if grepFound is False and args.grep is True:
-    print("Grep "+args.grep+" not found")
-
+    print(Fore.RED + Style.BRIGHT+"Grep "+args.grep+" not found")
