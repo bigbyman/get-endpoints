@@ -1,8 +1,8 @@
 from setuptools import setuptools
 setup (
 	name="endpoints",
-	version='0.2'
-	py_modules=['main.py'],
+	version='0.2',
+	py_modules=['main'],
 	install_requires=[
 		'Click',
 	],
