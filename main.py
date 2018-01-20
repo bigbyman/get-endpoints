@@ -3,6 +3,9 @@ from colorama import init,Fore, Back, Style
 init()
 
 
+def cli():
+    print('Converting to click')
+
 #function
 def printController (file):
     nextLine = ""
@@ -69,6 +72,7 @@ path = '' #your path
 controllerFound = False
 grepFound = False
 fileCounter=1
+
 #script
 for filename in os.listdir(path):
     with open(path+'/'+filename) as file:
