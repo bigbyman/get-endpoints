@@ -3,7 +3,7 @@
 
 ### Installation
 
-Clone repo, then run `pip install` while in the repo. [click](http://click.pocoo.org/5/) and [colorama](https://pypi.python.org/pypi/colorama) will be installed alongside.
+Clone repo, then run `pip install get-endpoints` while in the repo. [click](http://click.pocoo.org/5/) and [colorama](https://pypi.python.org/pypi/colorama) will be installed alongside.
 
 ---
 `getend` assumes that it is invoked one level above your 'controller' directory.
