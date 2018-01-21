@@ -1,10 +1,6 @@
-import os, argparse
+import os, click
 from colorama import init,Fore, Back, Style
-init()
-
-
-def cli():
-    print('Converting to click')
+from time import sleep
 
 #function
 def printController (file):
@@ -12,26 +8,27 @@ def printController (file):
     
     for line in file:
 
+        sleep(0.1)
         if("@RequestMapping" in line):
-            print(Fore.YELLOW + Style.BRIGHT + line.strip(' \n') + Style.RESET_ALL)
-            print('{')
+            click.echo(Fore.YELLOW + Style.BRIGHT + line.strip(' \n') + Style.RESET_ALL)
+            click.echo('{')
 
         elif("@GetMapping" in line):
-            print('\n'+Fore.YELLOW + Style.BRIGHT +'\t'+line.strip(' \n') + Style.RESET_ALL)
+            click.echo('\n'+Fore.YELLOW + Style.BRIGHT +'\t'+line.strip(' \n') + Style.RESET_ALL)
             nextLine = next(file)
-            print('\t'+nextLine.replace('public','').replace('{','').strip() + Style.RESET_ALL)
+            click.echo('\t'+nextLine.replace('public','').replace('{','').strip() + Style.RESET_ALL)
             
         elif("@PostMapping" in line):
-            print('\n'+Fore.YELLOW + Style.BRIGHT +'\t'+line.strip(' \n') + Style.RESET_ALL)
+            click.echo('\n'+Fore.YELLOW + Style.BRIGHT +'\t'+line.strip(' \n') + Style.RESET_ALL)
             nextLine = next(file)
-            print('\t'+nextLine.replace('public','').replace('{','').strip() + Style.RESET_ALL)
+            click.echo('\t'+nextLine.replace('public','').replace('{','').strip() + Style.RESET_ALL)
             
         elif("@RequestParam" in line):
-            print('\t'+Fore.YELLOW + Style.BRIGHT +'\t'+line.strip(' \n') + Style.RESET_ALL)
+            click.echo('\t'+Fore.YELLOW + Style.BRIGHT +'\t'+line.strip(' \n') + Style.RESET_ALL)
 
 
-    print('}')
-    print('-----------------------------------------------\n')
+    click.echo('}')
+    click.echo('-----------------------------------------------\n')
 
 #function
 def printGrep(file, grepString):
@@ -49,55 +46,48 @@ def printGrep(file, grepString):
             if("private" in line):
                 continue
             if first is True:
-                print(Style.BRIGHT)
+                click.echo(Style.BRIGHT)
                 first=False
-            print(Fore.GREEN + filename.replace('.java','') + '\t ' + Style.BRIGHT + line.replace('public','').strip(' \n')+Style.RESET_ALL)
+            click.echo(Fore.GREEN + filename.replace('.java','') + '\t ' + Style.BRIGHT + line.replace('public','').strip(' \n')+Style.RESET_ALL)
             grepFound = True
     return grepFound
 
 #setup
-parser = argparse.ArgumentParser(description="Endpoints script")
-parser.add_argument("--name", help="pick one controller")
-parser.add_argument("--l", help="list all controllers", action='store_true')
-parser.add_argument("--grep", help="print all lines containing string")
-args, leftovers = parser.parse_known_args()
-
-if args.name is not None:
-    controllerName = (args.name)
-else:
-    controllerName = ""
-    
-path = '' #your path
-
-controllerFound = False
-grepFound = False
-fileCounter=1
-
-#script
-for filename in os.listdir(path):
-    with open(path+'/'+filename) as file:
-        
-        if args.l is True:
-            print(str(fileCounter)+ ' - ' +Fore.GREEN + Style.BRIGHT +  filename.replace('.java','').replace('Controller','')+Style.RESET_ALL+"Controller")
-            fileCounter = fileCounter + 1
-        elif args.grep is not None and args.name is not None:
-            if(args.name in filename):
-                controllerFound = True
-                grepFound = printGrep(file, args.grep)
-        elif args.grep is not None:
-            controllerName = ""
-            if grepFound is False:
-                grepFound = printGrep(file, args.grep)
+@click.command()
+@click.option('--name', default=None, help="Print controller")
+@click.option('--l', is_flag=True, help="List all controllers")
+@click.option('--grep', default=None, help="Print all lines containing string")
+def cli(name, l, grep):
+    click.echo("Rollin...")
+    sleep(0.5)
+    path = "controller"
+    controllerFound = False
+    grepFound = False
+    fileCounter=1
+    if name:
+        click.echo("Searching for "+name+" controller")
+        sleep(0.5)
+    for filename in os.listdir(path):
+        with open(path+'/'+filename) as file: 
+            if l:
+                click.echo(str(fileCounter)+ ' - ' +Fore.GREEN + Style.BRIGHT +  filename.replace('.java','').replace('Controller','')+Style.RESET_ALL+"Controller")
+                fileCounter = fileCounter + 1
+            elif grep is not None and name is not None:
+                if(name in filename):
+                    controllerFound = True
+                    grepFound = printGrep(file, grep)
+            elif grep is not None:
+                if grepFound is False:
+                    grepFound = printGrep(file, grep)
+                else:
+                    printGrep(file,grep)
+                controllerFound=True
             else:
-                printGrep(file,args.grep)
-            controllerFound=True
-        else:
-            if controllerName in filename:
-                controllerFound = True
-                print(Style.BRIGHT + Fore.GREEN + filename)
-                printController(file)
-                
-if controllerFound is False and args.l is not True:
-   print(Fore.RED + Style.BRIGHT+"Controller "+controllerName+" not found")
-if grepFound is False and args.grep is True:
-    print(Fore.RED + Style.BRIGHT+"Grep "+args.grep+" not found")
+                if name is not None and name in filename:
+                    controllerFound = True
+                    click.echo(Style.BRIGHT + Fore.GREEN + filename)
+                    printController(file)
+    if controllerFound is False and name is not None:
+        click.echo(Fore.RED + Style.BRIGHT+"Controller "+name+" not found")
+    if grepFound is False and grep is True:
+        click.echo(Fore.RED + Style.BRIGHT+"Grep "+grep+" not found")
