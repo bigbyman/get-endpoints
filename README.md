@@ -1,9 +1,20 @@
 # Get Endpoints
 
---name NAME
 
---grep STRING
+### Installation
 
---c
+Clone repo, then run `pip install` while in the repo. [click](http://click.pocoo.org/5/) and [colorama](https://pypi.python.org/pypi/colorama) will be installed alongside.
 
-You need to provide your path to controllers package in the script.
+---
+Basic usage: `getend` assumes that it is invoked one level under your 'controller' directory.
+
+getend [OPTIONS]
+ ---
+`--l` List all controllers
+ 
+`--name TEXT` Print controller (may be more than one if name matches more than one filename)
+
+`--grep TEXT`   Print all lines from all controllers containing TEXT (with nice colors and formatting)
+
+---
+`--name` and `--grep` can be combined. You can use it e.g. to print only POST mappings.
